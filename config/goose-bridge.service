@@ -1,0 +1,42 @@
+[Unit]
+Description=GOOSE Protocol Cloud Bridge Service
+Documentation=https://github.com/your-org/goose-bridge
+After=network.target network-online.target
+Wants=network-online.target
+RequiresMountsFor=/var/lib/goose-bridge
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/goose-bridge -c /etc/goose-bridge/goose-bridge.conf
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# 安全设置
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log /var/lib/goose-bridge /var/run
+PrivateTmp=true
+
+# 资源限制
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# 环境变量
+Environment=PYTHONUNBUFFERED=1
+
+# PID文件
+PIDFile=/var/run/goose-bridge.pid
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=goose-bridge
+
+[Install]
+WantedBy=multi-user.target
