@@ -1,0 +1,61 @@
+20231201
+static MmsDataAccessError
+writeAccessHandler (DataAttribute* dataAttribute, MmsValue* value, ClientConnection connection, void* parameter)
+{
+    void* securityToken = ClientConnection_getSecurityToken(connection);
+
+    if (dataAttribute == IEDMODEL_GenericIO_LLN0_ModAuto_setVal)
+        printf("Write access to LLN0.ModAuto.setVal: %i\n", MmsValue_getBoolean(value));
+
+    if (securityToken != password2) {
+        printf("  Access denied\n");
+        return DATA_ACCESS_ERROR_OBJECT_ACCESS_DENIED;
+    }
+
+    return DATA_ACCESS_ERROR_SUCCESS;
+}
+
+设定写回调
+IedServer_handleWriteAccess(iedServer, IEDMODEL_LD1_GGIO1_AnIn1_subEna, writeAccessHandler, NULL);
+IedServer_handleWriteAccess(iedServer, IEDMODEL_LD1_GGIO1_AnIn1_subMag_f, writeAccessHandler, NULL);
+IedServer_handleWriteAccess(iedServer, IEDMODEL_LD1_GGIO1_AnIn1_subQ, writeAccessHandler, NULL);
+
+/* Allow only write access to settings that have a handler */
+    IedServer_setWriteAccessPolicy(iedServer, IEC61850_FC_SP, ACCESS_POLICY_DENY);
+
+    /* Set write access handler */
+    IedServer_handleWriteAccess(iedServer, IEDMODEL_GenericIO_LLN0_ModAuto_setVal, writeAccessHandler, NULL);
+
+    /* Set read access handler */
+    IedServer_setReadAccessHandler(iedServer, readAccessHandler, NULL);
+
+20231127
+1-修改读取列表时匹配规则--
+ied_connection.c
+LinkedList /*<char*>*/
+IedConnection_getLogicalNodeVariables(IedConnection self, IedClientError* error,
+        const char* logicalNodeReference)
+
+20230813
+1-修改了报告触发线程函数，处理消息不停留直接处理，报告相关处理每次间隔400毫秒，减少报告形成的阻塞
+2-将连接客户端个数限制为10个，第11个连接到来时，将会关闭最新的一个连接
+测试
+打开10个客户端，将第一个客户端设定为1毫秒触发一次
+再打开一个客户端，则第一个客户端会被挤掉
+
+测试5个客户端同时打开所有报告，然后依旧可以正常连接客户端
+后续部署上去需要董总那边编译一下，然后部署到新疆那边的程序中
+
+
+客户端如果设定为5个，那就可以保证实时的了，但是报告块同一台电脑
+可能无法全部占用
+打印信息---当前关联个数、发送报告情况
+
+static void
+eventWorkerThread(MmsMapping* self) 函数中是linux下的触发报告、控制等操作
+
+static void
+singleThreadedServerThread(void* parameter) 函数中是windows下触发的报告、控制等操作、连接等操作也在其中
+
+isoServerThread(void* isoServerParam)---linux 下连接管理线程
+

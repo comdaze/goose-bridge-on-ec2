@@ -1,6 +1,6 @@
 # GOOSE Protocol Cloud Bridge Service
 
-🚀 **生产级GOOSE协议云端桥接服务** - 专为AWS环境优化的工业协议云端部署解决方案
+🚀 **GOOSE协议云端桥接服务** - 专为AWS环境优化的工业协议云端部署解决方案
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-Industrial-green.svg)](#)
@@ -31,11 +31,6 @@
 - [TGW vs 传统多播对比](#-tgw多播-vs-传统局域网多播对比)
 - [桥接解决方案原理](#-桥接解决方案原理)
 
-### 项目信息
-- [架构说明](#️-架构说明)
-- [版本历史](#-版本历史)
-- [安全考虑](#-安全考虑)
-- [贡献指南](#-贡献指南)
 
 ## 🎯 项目概述
 
@@ -43,7 +38,6 @@
 
 ### 核心特性
 
-- ✅ **优化单端口设计** - 只需开放UDP 61850端口，简化安全组配置
 - ✅ **IGMP保活机制** - 防止AWS TGW 6分钟超时，基于官方文档优化
 - ✅ **VLAN GOOSE帧支持** - 完全兼容libiec61850和工业标准
 - ✅ **高性能异步处理** - 支持1000+ GOOSE帧/秒，生产级性能
@@ -68,8 +62,6 @@ goose-bridge/                           # 232KB 完整项目
 │   ├── igmp_multicast_test.py        # IGMP多播测试
 │   ├── aws_tgw_igmp_validator.py     # AWS TGW IGMP验证
 │   └── igmp_lifecycle_monitor_fixed.py # IGMP生命周期监控
-├── docs/                             # 文档
-│   └── PRODUCTION_DEPLOYMENT_GUIDE.md # 生产部署指南
 └── README.md                         # 项目说明（本文件）
 ```
 
