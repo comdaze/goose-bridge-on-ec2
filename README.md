@@ -88,6 +88,7 @@ aws ec2 create-key-pair \
     --query 'KeyMaterial' \
     --output text > ~/.ssh/goose-bridge-key-nw.pem
 chmod 400 ~/.ssh/*.pem
+
 # EC2-A (发布者)
 aws ec2 run-instances --image-id $AMI_ID --instance-type t3.medium \
     --key-name goose-bridge-key-nw --security-group-ids $SG_ID --subnet-id $SUBNET_ID \
@@ -123,6 +124,17 @@ EC2_C_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=GOOSE-Subs
 echo "EC2-A (Publisher): $EC2_A_IP"
 echo "EC2-B (Subscriber): $EC2_B_IP"  
 echo "EC2-C (Subscriber): $EC2_C_IP"
+
+# 2.3 禁用源/目标流量检查
+EC2_A_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=GOOSE-Publisher-A" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+aws ec2 modify-instance-attribute --instance-id $EC2_A_ID --no-source-dest-check
+
+EC2_B_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=GOOSE-Publisher-B" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+aws ec2 modify-instance-attribute --instance-id $EC2_B_ID --no-source-dest-check
+
+EC2_C_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=GOOSE-Publisher-C" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+aws ec2 modify-instance-attribute --instance-id $EC2_C_ID --no-source-dest-check
+
 ```
 
 ### 自动化快速部署
