@@ -1,0 +1,52 @@
+[Unit]
+Description=Independent Dual-Path GOOSE Protocol Cloud Bridge Service
+Documentation=https://github.com/comdaze/goose-bridge-on-ec2
+After=network.target network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/goose-bridge-dual -c /etc/goose-bridge/goose-bridge-dual.conf
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# 工作目录
+WorkingDirectory=/var/lib/goose-bridge
+
+# 环境变量
+Environment=PYTHONPATH=/usr/local/bin
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# 资源限制
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# 安全设置
+NoNewPrivileges=false
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log /var/lib/goose-bridge /var/run /dev/net/tun
+
+# 网络权限
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW CAP_SETUID CAP_SETGID
+
+# 日志设置
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=goose-bridge-dual
+
+# PID文件
+PIDFile=/var/run/goose-bridge-dual.pid
+
+[Install]
+WantedBy=multi-user.target
+Alias=goose-dual.service

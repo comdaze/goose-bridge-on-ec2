@@ -137,6 +137,8 @@ aws ec2 modify-instance-attribute --instance-id $EC2_C_ID --no-source-dest-check
 
 ```
 
+***以下部署向导为单路径部署方式，双路径模式向导请访问[双路径部署向导](README-DUAL-PATH.md)***
+
 ### 自动化快速部署
 
 在每个实例上运行安装，或者在一个实例上运行安装后，创建自定义 AMI 系统镜像，然后利用这个系统镜像创建其他实例。
